@@ -1,0 +1,31 @@
+# Go
+/gallery
+*.exe
+vendor/
+
+# Node
+web/node_modules/
+web/dist/
+
+# Data
+*.db
+*.db-wal
+*.db-shm
+thumbnails/
+transcoded/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+gallery-data/
+
+# Superpowers
+.superpowers/

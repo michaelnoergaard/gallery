@@ -1,0 +1,29 @@
+services:
+  gallery:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./test-media:/media:ro
+      - gallery-data:/data
+    environment:
+      - GALLERY_MEDIA_DIR=/media
+      - GALLERY_DATA_DIR=/data
+      - GALLERY_SECRET=dev-secret-change-me
+      - GALLERY_SCAN_WORKERS=8
+      - GALLERY_THUMB_WORKERS=4
+      - GALLERY_SCAN_INTERVAL=30m
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    restart: unless-stopped
+
+volumes:
+  gallery-data:
