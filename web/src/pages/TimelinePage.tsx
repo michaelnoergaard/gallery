@@ -63,7 +63,7 @@ export default function TimelinePage() {
 
   const allItems = useMemo(() => {
     if (!data?.pages) return []
-    return data.pages.flatMap((p) => p.items)
+    return data.pages.flatMap((p) => p.items ?? [])
   }, [data])
 
   const groups = useMemo(() => groupByMonth(allItems), [allItems])
