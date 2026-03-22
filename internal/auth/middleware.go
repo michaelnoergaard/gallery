@@ -22,19 +22,28 @@ type ContextUser struct {
 func AuthMiddleware(secret string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			var tokenStr string
+
+			// Check Authorization header first
 			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
-				http.Error(w, `{"error":"missing authorization header"}`, http.StatusUnauthorized)
+			if authHeader != "" {
+				parts := strings.SplitN(authHeader, " ", 2)
+				if len(parts) == 2 && parts[0] == "Bearer" {
+					tokenStr = parts[1]
+				}
+			}
+
+			// Fall back to query parameter (for img/video src URLs)
+			if tokenStr == "" {
+				tokenStr = r.URL.Query().Get("token")
+			}
+
+			if tokenStr == "" {
+				http.Error(w, `{"error":"missing authorization"}`, http.StatusUnauthorized)
 				return
 			}
 
-			parts := strings.SplitN(authHeader, " ", 2)
-			if len(parts) != 2 || parts[0] != "Bearer" {
-				http.Error(w, `{"error":"invalid authorization format"}`, http.StatusUnauthorized)
-				return
-			}
-
-			claims, err := ValidateToken(parts[1], secret)
+			claims, err := ValidateToken(tokenStr, secret)
 			if err != nil {
 				http.Error(w, `{"error":"invalid or expired token"}`, http.StatusUnauthorized)
 				return

@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import type { MediaItem } from '../../types/media.ts'
+import { mediaUrl } from '../../api/client.ts'
 
 interface VideoPlayerProps {
   item: MediaItem
@@ -36,7 +37,7 @@ export default function VideoPlayer({ item }: VideoPlayerProps) {
       <video
         ref={videoRef}
         key={item.id}
-        src={`/api/media/${item.id}/file`}
+        src={mediaUrl(`/api/media/${item.id}/file`)}
         controls
         style={{
           maxWidth: '100%',

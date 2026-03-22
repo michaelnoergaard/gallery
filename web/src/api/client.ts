@@ -102,5 +102,13 @@ function del<T>(path: string): Promise<T> {
   return request<T>('DELETE', path)
 }
 
+/** Build a URL with the auth token as a query param (for img/video src). */
+export function mediaUrl(path: string): string {
+  const token = useAuthStore.getState().token
+  if (!token) return path
+  const sep = path.includes('?') ? '&' : '?'
+  return `${path}${sep}token=${encodeURIComponent(token)}`
+}
+
 export const apiClient = { get, post, put, del }
 export { get, post, put, del }

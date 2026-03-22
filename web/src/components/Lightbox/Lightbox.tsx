@@ -4,6 +4,7 @@ import ImageViewer from './ImageViewer.tsx'
 import VideoPlayer from './VideoPlayer.tsx'
 import InfoPanel from './InfoPanel.tsx'
 import { formatFileSize } from '../../utils/format.ts'
+import { mediaUrl } from '../../api/client.ts'
 
 interface LightboxProps {
   items: MediaItem[]
@@ -73,7 +74,7 @@ export default function Lightbox({ items, initialIndex, onClose }: LightboxProps
       const adj = items[index]
       if (adj && adj.media_type === 'image') {
         const img = new Image()
-        img.src = `/api/media/${adj.id}/file`
+        img.src = mediaUrl(`/api/media/${adj.id}/file`)
       }
     }
     preload(currentIndex - 1)

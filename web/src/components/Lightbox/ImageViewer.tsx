@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import type { MediaItem } from '../../types/media.ts'
+import { mediaUrl } from '../../api/client.ts'
 
 interface ImageViewerProps {
   item: MediaItem
@@ -32,7 +33,7 @@ export default function ImageViewer({ item }: ImageViewerProps) {
         </div>
       )}
       <img
-        src={`/api/media/${item.id}/file`}
+        src={mediaUrl(`/api/media/${item.id}/file`)}
         alt={item.file_name}
         onLoad={handleLoad}
         draggable={false}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { MediaItem } from '../../types/media.ts'
 import { formatFileSize, formatDuration, formatDate } from '../../utils/format.ts'
+import { mediaUrl } from '../../api/client.ts'
 import AddToAlbumModal from '../Albums/AddToAlbumModal.tsx'
 
 interface InfoPanelProps {
@@ -148,7 +149,7 @@ export default function InfoPanel({ item, isOpen, onClose }: InfoPanelProps) {
             <div style={sectionTitleStyle}>Actions</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <a
-                href={`/api/media/${item.id}/file`}
+                href={mediaUrl(`/api/media/${item.id}/file`)}
                 download={item.file_name}
                 style={{
                   display: 'flex',

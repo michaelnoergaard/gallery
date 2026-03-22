@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import type { MediaItem } from '../../types/media.ts'
 import { formatDuration } from '../../utils/format.ts'
+import { mediaUrl } from '../../api/client.ts'
 
 interface MediaCardProps {
   item: MediaItem
@@ -80,7 +81,7 @@ export default function MediaCard({ item, index = 0, onClick }: MediaCardProps) 
       )}
       {visible && !error && (
         <img
-          src={`/api/media/${item.id}/thumb`}
+          src={mediaUrl(`/api/media/${item.id}/thumb`)}
           alt={item.file_name}
           loading={isEager ? 'eager' : 'lazy'}
           onLoad={handleLoad}
