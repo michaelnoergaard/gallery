@@ -9,22 +9,22 @@ import (
 )
 
 type MediaItem struct {
-	ID            int64
-	FilePath      string
-	FileName      string
-	FileSize      int64
-	FileHash      string
-	MediaType     string // "image" or "video"
-	MimeType      string
-	Width         *int
-	Height        *int
-	DurationMs    *int
-	TakenAt       *time.Time
-	Year          int
-	Month         int
-	ThumbnailPath *string
-	IndexedAt     time.Time
-	UpdatedAt     time.Time
+	ID            int64      `json:"id"`
+	FilePath      string     `json:"file_path"`
+	FileName      string     `json:"file_name"`
+	FileSize      int64      `json:"file_size"`
+	FileHash      string     `json:"file_hash"`
+	MediaType     string     `json:"media_type"` // "image" or "video"
+	MimeType      string     `json:"mime_type"`
+	Width         *int       `json:"width"`
+	Height        *int       `json:"height"`
+	DurationMs    *int       `json:"duration_ms"`
+	TakenAt       *time.Time `json:"taken_at"`
+	Year          int        `json:"year"`
+	Month         int        `json:"month"`
+	ThumbnailPath *string    `json:"thumbnail_path"`
+	IndexedAt     time.Time  `json:"indexed_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
 }
 
 type MediaListParams struct {
@@ -36,10 +36,10 @@ type MediaListParams struct {
 }
 
 type MediaListResult struct {
-	Items      []*MediaItem
-	Total      int
-	Page       int
-	TotalPages int
+	Items      []*MediaItem `json:"items"`
+	Total      int          `json:"total"`
+	Page       int          `json:"page"`
+	TotalPages int          `json:"total_pages"`
 }
 
 func (db *DB) InsertMediaItem(item *MediaItem) error {
