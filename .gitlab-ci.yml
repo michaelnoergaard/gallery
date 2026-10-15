@@ -1,0 +1,51 @@
+# Translated from .github/workflows/docker.yml, 2026-10-15.
+# Wave 2 of the GitLab migration, homelab-migration#7.
+#
+# GALLERY IS THE ODD ONE, in three ways, all preserved deliberately:
+#
+# 1. Its default branch is master, not main, and 107 runs the image tagged
+#    :master. The branch name feeds the deployment tag, so renaming the branch
+#    would silently break the deploy. Left alone.
+# 2. It has no version file — no package.json, no pyproject.toml. The GitHub
+#    workflow tagged with type=semver from git tags that have never existed, so
+#    the version tags never fired. Here it is tagged by branch and commit only,
+#    which is what actually happens rather than what was intended.
+# 3. Its GitHub workflow ran on ubuntu-latest with zero registered runners, so it
+#    has not built since before the 9 October cutover. Migrating it is also what
+#    repairs it.
+#
+# No docker build: the runner has no Docker daemon, deliberately.
+
+stages: [build]
+
+default:
+  tags: [homelab]
+
+build:
+  stage: build
+  image:
+    name: local/buildkit-rootless-setuid
+    entrypoint: [""]
+  variables:
+    BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  script:
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]; then
+        mkdir -p ~/.docker
+        printf '{"auths":{"%s":{"auth":"%s"}}}' "$CI_REGISTRY" \
+          "$(printf '%s:%s' "$CI_REGISTRY_USER" "$CI_REGISTRY_PASSWORD" | base64 | tr -d '\n')" \
+          > ~/.docker/config.json
+        OUTPUT="type=image,\"name=${CI_REGISTRY_IMAGE}:${CI_COMMIT_BRANCH},${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}\",push=true,registry.insecure=true"
+      else
+        OUTPUT="type=oci,dest=/tmp/image.tar"
+        echo "merge request: building but deliberately not pushing"
+      fi
+      buildctl-daemonless.sh build \
+        --frontend dockerfile.v0 --local context=. --local dockerfile=. \
+        --opt platform=linux/amd64 \
+        --opt "label:org.opencontainers.image.revision=${CI_COMMIT_SHA}" \
+        --opt "label:org.opencontainers.image.source=${CI_PROJECT_URL}" \
+        --output "$OUTPUT"
