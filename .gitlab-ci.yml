@@ -49,3 +49,5 @@ build:
         --opt "label:org.opencontainers.image.revision=${CI_COMMIT_SHA}" \
         --opt "label:org.opencontainers.image.source=${CI_PROJECT_URL}" \
         --output "$OUTPUT"
+
+# first pipeline run, homelab-migration#7
